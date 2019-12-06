@@ -1,0 +1,65 @@
+<h1>hello to our ippodrom!</h1>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+
+	<div id='ippodrom'>
+
+	</div>
+
+<style>
+#ippodrom{
+	display:flex;
+	flex-direction:column;
+}
+</style>
+<script>
+    function getVar(){
+        let x = Math.random() * (1000 - 1) + 1;
+        return x;
+    }
+    function getTime(min, max){
+        return Math.random() * (max - min) + min;
+    }
+	let count = 10;
+	function startHorses(count){
+		let x = 0;
+		let timeout = 0;
+
+
+		for (i=0;i<count;i++){
+
+			new Promise(function (resolve) {
+				let ar = Array();
+
+				ar[0] = i;
+				ar[1] = getTime(1,10000);
+                
+				console.log(i+'-й '+ar[1]);
+                
+				setTimeout(function () {
+					resolve(ar);
+				}, ar[1])
+			}).then(function (result) {
+                document.getElementById('horse'+result[0]).innerHTML += " - прибежала за = " + (result[1]/1000).toFixed(1) + " сек.";
+			});
+			
+		}
+	}
+	
+    $(function () {
+        setHorses(count);
+		startHorses(count)
+    });
+	
+	function setHorses(count){
+		for (i=0;i<count;i++){
+			let horse = document.createElement('div');
+			horse.className = 'fas fa-horse';
+			horse.classList.add("mystyle");
+            horse.setAttribute('id','horse'+i);
+            horse.innerHTML = ' '+horse.getAttribute('id');
+			document.getElementById('ippodrom').appendChild(horse);
+		}
+	}
+</script>
