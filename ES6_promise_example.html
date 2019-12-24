@@ -1,65 +1,88 @@
-<h1>hello to our ippodrom!</h1>
+<h1>Welcome to our hippodrome!</h1>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
 
-	<div id='ippodrom'>
+<label for="count">Horses count:</label>
+<input type="text" value="10" id="count" name="count">
 
-	</div>
+<input type="radio" id="async" name="async_sync" checked>
+<label for="async">async</label>
+
+<input type="radio" id="sync" name="async_sync">
+<label for="sync">sync</label>
+
+<br>
+<button id="start">Start!</button>
+
+<div id='hippodrome'></div>
 
 <style>
-#ippodrom{
-	display:flex;
-	flex-direction:column;
-}
+    #hippodrome {
+        display: flex;
+        flex-direction: column;
+    }
 </style>
 <script>
-    function getVar(){
-        let x = Math.random() * (1000 - 1) + 1;
-        return x;
+    //https://learn.javascript.ru/async-await
+    // const delay = ms => new Promise(yea => setTimeout(yea, ms));
+    // delay(1000).then(() => console.log('waited 1000 secs'))
+
+    function setHorses(count) {
+        const hippodrome = document.getElementById('hippodrome');
+        hippodrome.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            let horse = document.createElement('div');
+            horse.className = 'fas fa-horse';
+            horse.classList.add("mystyle");
+            horse.setAttribute('id', 'horse' + i);
+            horse.innerHTML = ' ' + horse.getAttribute('id');
+            hippodrome.appendChild(horse);
+        }
     }
-    function getTime(min, max){
+
+    function startHorsesAsync(count) {
+        for (let i = 0; i < count; i++) {
+            new Promise(function (resolve) {
+                let ar = Array();
+                ar[0] = i;
+                ar[1] = getTime(1, 10000);
+                console.log(i + '- ' + ar[1]);
+                setTimeout(function () {
+                    resolve(ar);
+                }, ar[1])
+            }).then(function (result) {
+                document.getElementById('horse' + result[0]).innerHTML += " - ran for " + (result[1] / 1000).toFixed(1) + " sec.";
+            });
+        }
+    }
+
+    async function startHorsesSync(count) {
+        let i = 0;
+        const horseRun = ms => new Promise(yea => setTimeout(yea, ms));
+        while (i < count) {
+            let thisTimeRun = getTime(1, 4000);
+            await horseRun(thisTimeRun).then(() => {
+                let msg = ' Async await horse №' + i + ' runned for ' + (thisTimeRun / 1000).toFixed(1) + 'sec.';
+                document.getElementById('horse' + i).innerHTML += msg;
+            });
+            i++;
+        }
+    }
+
+    function getTime(min, max) {
         return Math.random() * (max - min) + min;
     }
-	let count = 10;
-	function startHorses(count){
-		let x = 0;
-		let timeout = 0;
 
+    const start = document.getElementById('start');
+    start.onclick = function () {
+        const count = document.getElementById('count').value;
 
-		for (i=0;i<count;i++){
-
-			new Promise(function (resolve) {
-				let ar = Array();
-
-				ar[0] = i;
-				ar[1] = getTime(1,10000);
-                
-				console.log(i+'-й '+ar[1]);
-                
-				setTimeout(function () {
-					resolve(ar);
-				}, ar[1])
-			}).then(function (result) {
-                document.getElementById('horse'+result[0]).innerHTML += " - прибежала за = " + (result[1]/1000).toFixed(1) + " сек.";
-			});
-			
-		}
-	}
-	
-    $(function () {
         setHorses(count);
-		startHorses(count)
-    });
-	
-	function setHorses(count){
-		for (i=0;i<count;i++){
-			let horse = document.createElement('div');
-			horse.className = 'fas fa-horse';
-			horse.classList.add("mystyle");
-            horse.setAttribute('id','horse'+i);
-            horse.innerHTML = ' '+horse.getAttribute('id');
-			document.getElementById('ippodrom').appendChild(horse);
-		}
-	}
+
+        if (document.getElementById('sync').checked) {
+            startHorsesSync(count);
+        } else if (document.getElementById('async').checked) {
+            startHorsesAsync(count);
+        }
+    };
 </script>
