@@ -1,12 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hippodrome</title>
+    <style>
+        #hippodrome {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
+
+<!--    Модули JS https://developer.mozilla.org/ru/docs/Web/JavaScript/Guide/Modules-->
+    <script type="module" src="hippo_module.js"></script>
+</head>
+<body>
+
 <h1>Welcome to our hippodrome!</h1>
-
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css">
-
+//ES7-ES9 Features #4 Асинхронные функции (Async Functions)
+<br>
+https://www.youtube.com/watch?v=JtnIU6HemK8
+<br>
 <label for="count">Horses count:</label>
 <input type="text" value="10" id="count" name="count">
 
-<input type="radio" id="async" name="async_sync" checked>
-<label for="async">async</label>
+<input type="radio" id="promisesAsync" name="async_sync" checked>
+<label for="promisesAsync">promisesAsync</label>
 
 <input type="radio" id="sync" name="async_sync">
 <label for="sync">sync</label>
@@ -16,73 +39,5 @@
 
 <div id='hippodrome'></div>
 
-<style>
-    #hippodrome {
-        display: flex;
-        flex-direction: column;
-    }
-</style>
-<script>
-    //https://learn.javascript.ru/async-await
-    // const delay = ms => new Promise(yea => setTimeout(yea, ms));
-    // delay(1000).then(() => console.log('waited 1000 secs'))
-
-    function setHorses(count) {
-        const hippodrome = document.getElementById('hippodrome');
-        hippodrome.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-            let horse = document.createElement('div');
-            horse.className = 'fas fa-horse';
-            horse.classList.add("mystyle");
-            horse.setAttribute('id', 'horse' + i);
-            horse.innerHTML = ' ' + horse.getAttribute('id');
-            hippodrome.appendChild(horse);
-        }
-    }
-
-    function startHorsesAsync(count) {
-        for (let i = 0; i < count; i++) {
-            new Promise(function (resolve) {
-                let ar = Array();
-                ar[0] = i;
-                ar[1] = getTime(1, 10000);
-                console.log(i + '- ' + ar[1]);
-                setTimeout(function () {
-                    resolve(ar);
-                }, ar[1])
-            }).then(function (result) {
-                document.getElementById('horse' + result[0]).innerHTML += " - ran for " + (result[1] / 1000).toFixed(1) + " sec.";
-            });
-        }
-    }
-
-    async function startHorsesSync(count) {
-        let i = 0;
-        const horseRun = ms => new Promise(yea => setTimeout(yea, ms));
-        while (i < count) {
-            let thisTimeRun = getTime(1, 4000);
-            await horseRun(thisTimeRun).then(() => {
-                let msg = ' Async await horse №' + i + ' runned for ' + (thisTimeRun / 1000).toFixed(1) + 'sec.';
-                document.getElementById('horse' + i).innerHTML += msg;
-            });
-            i++;
-        }
-    }
-
-    function getTime(min, max) {
-        return Math.random() * (max - min) + min;
-    }
-
-    const start = document.getElementById('start');
-    start.onclick = function () {
-        const count = document.getElementById('count').value;
-
-        setHorses(count);
-
-        if (document.getElementById('sync').checked) {
-            startHorsesSync(count);
-        } else if (document.getElementById('async').checked) {
-            startHorsesAsync(count);
-        }
-    };
-</script>
+</body>
+</html>
